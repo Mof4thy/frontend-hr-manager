@@ -3,6 +3,7 @@ import { queryClient } from '../main.jsx'
 
 
 const login = async (username, password) => {
+    console.log('Logging in with username:', username, 'and password:', password)
     const response = await api.post('/auth/login', { username, password })
     return response.data
     
