@@ -120,13 +120,9 @@ export const translations = {
     en: 'Military Service Status',
     ar: 'حالة الخدمة العسكرية'
   },
-  'social-status': {
-    en: 'Social Status',
-    ar: 'الحالة الاجتماعية'
-  },
   'marital-status': {
     en: 'Marital Status',
-    ar: 'الحالة الزوجية'
+    ar: 'الحالة الاجتماعية'
   },
   'has-vehicle': {
     en: 'Do you own a vehicle?',

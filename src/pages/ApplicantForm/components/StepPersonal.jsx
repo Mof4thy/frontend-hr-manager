@@ -248,7 +248,6 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
         { value: 'متزوج', label: t('married') || 'Married' },
         { value: 'مطلق', label: t('divorced') || 'Divorced' },
         { value: 'أرمل', label: t('widowed') || 'Widowed' },
-        { value: 'أخرى', label: t('other') || 'Other' }
     ]
 
     const hasVehicleOptions = [

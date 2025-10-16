@@ -64,6 +64,113 @@ const ApplicantForm = () => {
         }
     }
 
+    // Translation function to convert Arabic values to English
+    const translateFormData = (data) => {
+        // Skill level mapping
+        const skillMap = {
+            'ممتاز': 'excellent',
+            'جيد جداً': 'very_good', 
+            'جيد': 'good',
+            'ضعيف': 'weak'
+        }
+        
+        // Language level mapping
+        const languageMap = {
+            'مبتدئ': 'beginner',
+            'متوسط': 'intermediate', 
+            'متقدم': 'advanced',
+            'طليق': 'fluent',
+            'لغة أم': 'native'
+        }
+        
+        // Personal info mapping
+        const militaryServiceMap = {
+            'معفي نهائياً': 'permanently_exempt',
+            'مؤجل': 'deferred',
+            'أدى الخدمة': 'completed_service',
+            'معفي مؤقتاً': 'temporarily_exempt'
+        }
+        
+        const socialStatusMap = {
+            'أعزب': 'single',
+            'متزوج': 'married',
+            'مطلق': 'divorced',
+            'أرمل': 'widowed',
+            'أخرى': 'other'
+        }
+        
+        const vehicleMap = {
+            'نعم': 'yes',
+            'لا': 'no'
+        }
+        
+        const drivingLicenseMap = {
+            'لا يوجد': 'no_license',
+            'رخصة خاصة': 'private_license',
+            'رخصة مهنية - مستوى 1': 'professional_level_1',
+            'رخصة مهنية - مستوى 2': 'professional_level_2',
+            'رخصة مهنية - مستوى 3': 'professional_level_3',
+            'رخصة دراجة نارية': 'motorcycle_license'
+        }
+        
+        // Clone the data to avoid mutating the original
+        const translatedData = JSON.parse(JSON.stringify(data))
+        
+        // Translate personal info
+        if (translatedData.personalInfo) {
+            const personalInfo = translatedData.personalInfo
+            
+            if (personalInfo.militaryServiceStatus && militaryServiceMap[personalInfo.militaryServiceStatus]) {
+                personalInfo.militaryServiceStatus = militaryServiceMap[personalInfo.militaryServiceStatus]
+            }
+            
+            if (personalInfo.socialStatus && socialStatusMap[personalInfo.socialStatus]) {
+                personalInfo.socialStatus = socialStatusMap[personalInfo.socialStatus]
+            }
+            
+            if (personalInfo.hasVehicle && vehicleMap[personalInfo.hasVehicle]) {
+                personalInfo.hasVehicle = vehicleMap[personalInfo.hasVehicle]
+            }
+            
+            if (personalInfo.drivingLicense && drivingLicenseMap[personalInfo.drivingLicense]) {
+                personalInfo.drivingLicense = drivingLicenseMap[personalInfo.drivingLicense]
+            }
+        }
+        
+        // Translate skills
+        if (translatedData.skills?.predefined) {
+            Object.keys(translatedData.skills.predefined).forEach(skill => {
+                const arabicValue = translatedData.skills.predefined[skill]
+                if (skillMap[arabicValue]) {
+                    translatedData.skills.predefined[skill] = skillMap[arabicValue]
+                }
+            })
+        }
+        
+        if (translatedData.skills?.custom) {
+            translatedData.skills.custom.forEach(skill => {
+                if (skillMap[skill.level]) {
+                    skill.level = skillMap[skill.level]
+                }
+            })
+        }
+        
+        // Translate languages
+        if (translatedData.languages?.english && languageMap[translatedData.languages.english]) {
+            translatedData.languages.english = languageMap[translatedData.languages.english]
+        }
+        
+        if (translatedData.languages?.additional) {
+            translatedData.languages.additional.forEach(lang => {
+                if (languageMap[lang.level]) {
+                    lang.level = languageMap[lang.level]
+                }
+            })
+        }
+        
+        return translatedData
+    }
+
     const handleSubmit = async () => {    
         setValidMessage('')
         console.log("data entered >> ", state)
@@ -92,10 +199,12 @@ const ApplicantForm = () => {
                 cv: undefined // Remove the file object from the data
             }
             
-            console.log('Submitting application with data:', applicationData)
+            // Translate Arabic values to English
+            const translatedData = translateFormData(applicationData)
+            
             
             // Submit the application
-            const response = await submitApplication(applicationData)
+            const response = await submitApplication(translatedData)
             console.log('Application submission response:', response)
             
             if(response.success) {
