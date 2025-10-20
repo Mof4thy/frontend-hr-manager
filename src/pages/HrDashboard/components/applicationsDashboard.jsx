@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react'
 import { Download } from 'lucide-react'
 import { exportApplicationsToExcel } from '../../../services/applicationService'
 import { useParams } from 'react-router-dom'
-
 import {getAcceptedToJoinApplications} from "../../../services/applicationService"
 
 const ApplicationsDashboard = ({ applications, isLoading, error }) => {
@@ -15,6 +14,13 @@ const ApplicationsDashboard = ({ applications, isLoading, error }) => {
     const [searchid, setSearchid] = useState('')
     const [filteredApplications, setFilteredApplications] = useState([])
     const [isExporting, setIsExporting] = useState(false)
+
+
+    useEffect(()=>{
+        setFilteredApplications(applications)
+        navigate(`/dashboard/`)
+
+    }, [applications])
 
 
     // Handle status-based filtering
