@@ -19,41 +19,48 @@ const HrDashboard = () => {
 
     return (            
         <>
-            <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 '>
+            <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 '>
                 <StatusCard 
-                    title="Total Applications"
+                    title="Total_Applications"
                     count={statsData.totalApplications}
                     description="All submitted applications"
-                    color="blue"
+                    color="gray"
                     icon={Users}
                 />
                 <StatusCard 
-                    title="Pending"
+                    title="Pending_Applications"
                     count={byStatus.pending}
                     description="Awaiting review"
                     color="yellow"
                     icon={Clock}
                 />
                 <StatusCard 
-                    title="Reviewed"
+                    title="Reviewed_Applications"
                     count={byStatus.reviewed}
                     description="Under review"
                     color="purple"
                     icon={FileText}
                 />
                 <StatusCard 
-                    title="Accepted"
-                    count={byStatus.accepted}
-                    description="Approved applications"
-                    color="green"
-                    icon={CheckCircle}
-                />
-                <StatusCard 
-                    title="Rejected"
+                    title="Rejected_Applications"
                     count={byStatus.rejected}
                     description="Declined applications"
                     color="red"
                     icon={XCircle}
+                />
+                <StatusCard 
+                    title="Accepted_for_Interview"
+                    count={byStatus.accepted_for_interview}
+                    description="Approved applications"
+                    color="blue"
+                    icon={CheckCircle}
+                />
+                <StatusCard 
+                    title="Accepted_to_Join"
+                    count={byStatus.accepted_to_join}
+                    description="Accepted to join"
+                    color="green"
+                    icon={CheckCircle}
                 />
             </div>
 

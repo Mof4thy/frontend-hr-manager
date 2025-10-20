@@ -77,7 +77,9 @@ const ApplicationDetails = () => {
         switch (status?.toLowerCase()) {
             case 'pending':
                 return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-            case 'accepted':
+            case 'accepted_for_interview':
+                return 'bg-blue-100 text-blue-800 border-blue-200'
+            case 'accepted_to_join':
                 return 'bg-green-100 text-green-800 border-green-200'
             case 'reviewed':
                 return 'bg-purple-100 text-purple-800 border-purple-200'
@@ -164,6 +166,13 @@ const ApplicationDetails = () => {
                         <p className="text-sm text-gray-500">
                             Applied on {formatDate(applicationDetails.createdAt)}
                         </p>
+
+                        <button onClick={() => handleStatusChange('accepted_to_join')} 
+                            className=" mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+
+                        >
+                            Accept to Join  
+                        </button>
                     </div>
                     
                     {/* Status Update Buttons */}
@@ -175,18 +184,21 @@ const ApplicationDetails = () => {
                             Mark as Reviewed
                         </button>
                         <button
-                            onClick={() => handleStatusChange('accepted')}
-                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                            onClick={() => handleStatusChange('accepted_for_interview')}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"                            
                         >
-                            Accept
+                            Invite to Interview
                         </button>
+
                         <button
                             onClick={() => handleStatusChange('rejected')}
                             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
                         >
                             Reject
                         </button>
+
                     </div>
+                    
                 </div>
             </div>
 

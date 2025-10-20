@@ -4,22 +4,79 @@ import Button from '../../../components/button'
 import { useState, useEffect } from 'react'
 import { Download } from 'lucide-react'
 import { exportApplicationsToExcel } from '../../../services/applicationService'
+import { useParams } from 'react-router-dom'
+
+import {getAcceptedToJoinApplications} from "../../../services/applicationService"
 
 const ApplicationsDashboard = ({ applications, isLoading, error }) => {
     // Sample data matching the design
-
+    const { status } = useParams()
     const [search, setSearch] = useState('')
     const [searchid, setSearchid] = useState('')
-    const [filteredApplications, setFilteredApplications] = useState(applications)
+    const [filteredApplications, setFilteredApplications] = useState([])
     const [isExporting, setIsExporting] = useState(false)
 
+
+    // Handle status-based filtering
     useEffect(() => {
-        setFilteredApplications(applications)
-    }, [applications])
+        // Don't process if applications is not loaded yet
+        if (!applications || !Array.isArray(applications)) {
+            setFilteredApplications([])
+            return
+        }
+
+        if(status) {
+            if(status === "total_applications"){
+                setFilteredApplications(applications)   
+            } else if(status === "pending_applications") {
+                setFilteredApplications(applications.filter((application) => application.status === "pending"))
+            } else if(status === "reviewed_applications") {
+                setFilteredApplications(applications.filter((application) => application.status === "reviewed"))
+            } else if(status === "rejected_applications") {
+                setFilteredApplications(applications.filter((application) => application.status === "rejected"))
+            } else if(status === "accepted_for_interview") {
+                setFilteredApplications(applications.filter((application) => application.status === "accepted_for_interview"))
+            } else if(status === "accepted_to_join") {
+                // Don't filter here - let the API call handle it
+                // This prevents filtering with stale data
+            } else {
+                // Fallback for any other status values
+                setFilteredApplications(applications.filter((application) => application.status === status))
+            }
+        } else {
+            setFilteredApplications(applications)   
+        }
+    }, [applications, status])
+
+
+    // Separate useEffect for accepted_to_join API call - only when status changes
+    useEffect(() => {
+        if(status === "accepted_to_join") {
+            getallAcceptedToJoinApplications()
+        }
+    }, [status]) // Only depend on status, not applications
+
+    const getallAcceptedToJoinApplications = async()=>{
+        try {
+            const res = await getAcceptedToJoinApplications()
+            console.log('Accepted to join API response:', res)
+            setFilteredApplications(res.data.applications)
+           
+        } catch (error) {
+            console.log('Error fetching accepted to join applications:', error)
+            // On error, set empty array to prevent crashes
+            setFilteredApplications([])
+        }
+    }
+
+
+
 
     const handleSearch = (value) => {
         setSearch(value)
         setSearchid('') 
+        
+        if (!applications || !Array.isArray(applications)) return
         
         if (!value.trim()) {
             setFilteredApplications(applications)
@@ -37,6 +94,8 @@ const ApplicationsDashboard = ({ applications, isLoading, error }) => {
     const handleSearchbyid = (value) =>{
         setSearchid(value)
         setSearch('') 
+        
+        if (!applications || !Array.isArray(applications)) return
         
         if (!value.trim()) {
             setFilteredApplications(applications)
@@ -109,8 +168,10 @@ const ApplicationsDashboard = ({ applications, isLoading, error }) => {
         switch (status.toLowerCase()) {
             case 'pending':
                 return 'bg-yellow-100 text-yellow-800'
-            case 'accepted':
-                return 'bg-green-100 text-green-800'
+                case 'accepted_for_interview':
+                    return 'bg-blue-100 text-blue-800 border-blue-200'
+                case 'accepted_to_join':
+                    return 'bg-green-100 text-green-800 border-green-200'
             case 'reviewed':
                 return 'bg-purple-100 text-purple-800'
             case 'rejected':
@@ -205,7 +266,7 @@ const ApplicationsDashboard = ({ applications, isLoading, error }) => {
                     </thead>
                     
                     <tbody className="bg-white divide-y divide-gray-200 ">
-                        {filteredApplications.map((application) => (
+                        {Array.isArray(filteredApplications) && filteredApplications.map((application) => (
                             <tr key={application.applicationId} className="hover:bg-gray-50 transition-colors">
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="text-sm font-medium text-gray-900">
@@ -277,6 +338,13 @@ const ApplicationsDashboard = ({ applications, isLoading, error }) => {
                                 </td>
                             </tr>
                         ))}
+                        {(!Array.isArray(filteredApplications) || filteredApplications.length === 0) && (
+                            <tr>
+                                <td colSpan="8" className="px-6 py-8 text-center text-gray-500">
+                                    {isLoading ? 'Loading applications...' : 'No applications found'}
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>

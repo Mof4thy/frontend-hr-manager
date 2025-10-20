@@ -40,6 +40,8 @@ const getAllApplications = async () => {
     return response.data
 }
 
+
+
 const getApplicationDetails = async (id) => {
     const response = await api.get(`${API_URL}/applications/${id}`)
     console.log('Application details:', response.data)
@@ -64,4 +66,10 @@ const exportApplicationsToExcel = async () => {
     return response
 }
 
-export { uploadCV, submitApplication, getAllApplications, getApplicationDetails, updateApplicationStatus, getApplicationStatistics, exportApplicationsToExcel }
+const getAcceptedToJoinApplications = async () => {
+    const response = await api.get(`${API_URL}/applications/accepted_to_join`)
+    return response.data
+}
+
+
+export { uploadCV, submitApplication, getAllApplications, getApplicationDetails, updateApplicationStatus, getApplicationStatistics, exportApplicationsToExcel, getAcceptedToJoinApplications }
