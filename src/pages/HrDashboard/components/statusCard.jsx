@@ -14,7 +14,7 @@ const StatusCard = ({ title, count, description, color = "blue", icon: Icon }) =
 
     const filterapplicationsbystatus = (title) => {
        
-            navigate(`/dashboard${title.toLowerCase()}`)
+            navigate(`/dashboard/${title.toLowerCase()}`)
         
     }
 
