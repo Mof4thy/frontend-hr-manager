@@ -18,7 +18,7 @@ const ApplicationsDashboard = ({ applications, isLoading, error }) => {
 
     useEffect(()=>{
         setFilteredApplications(applications)
-        navigate(`/dashboard/`)
+        navigate(`/dashboard`)
 
     }, [applications])
 

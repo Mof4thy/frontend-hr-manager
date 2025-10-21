@@ -29,7 +29,7 @@ function App() {
               {/* Protected HR Dashboard routes */}
               <Route element={<ProtectedRoute />}>
                 <Route element={<Layout/>}>
-                  <Route path='/dashboard/' element={<HrDashboard />} />
+                  <Route path='/dashboard' element={<HrDashboard />} />
                   <Route path='/dashboard/:status' element={<HrDashboard />} />
                   <Route path='/applications/:id' element={<ApplicationDetails />} />
                   <Route path='/profile' element={<Profile />} /> 
