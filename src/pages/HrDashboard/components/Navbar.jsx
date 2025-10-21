@@ -30,7 +30,8 @@ const Navbar = () => {
         }
     }
 
-    const isDashboard = pathname === "/dashboard"
+    // const isDashboard = pathname === "/dashboard"
+    const isDashboard = pathname.startsWith("/dashboard")
     const isProfile = pathname.startsWith("/profile")
     const isUserManagment = pathname.startsWith("/user-managment")
     const isJobTitles = pathname.startsWith("/admin/job-titles")
