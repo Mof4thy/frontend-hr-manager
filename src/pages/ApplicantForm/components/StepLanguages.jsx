@@ -21,7 +21,7 @@ const StepLanguages = ({ checkValidStep, setValidMessage }) => {
         { value: 'مبتدئ', label: t('beginner') },
         { value: 'متوسط', label: t('intermediate') },
         { value: 'متقدم', label: t('advanced') },
-        { value: 'طليق', label: t('fluent') },
+        { value: 'طلق', label: t('fluent') },
         { value: 'لغة أم', label: t('native') }
     ]
 

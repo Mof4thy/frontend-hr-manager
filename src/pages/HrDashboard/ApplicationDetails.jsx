@@ -130,7 +130,35 @@ const ApplicationDetails = () => {
         )
     }
 
-    const { personalInfo, currentJob, experiences, education, skills, languages, companyRelationships } = applicationDetails
+    // Transform API data to match component expectations
+    const { 
+        personalInfo, 
+        currentJob, 
+        experiences, 
+        education, 
+        predefinedSkills,
+        customSkills,
+        languages: apiLanguages,
+        additionalLanguages,
+        companyRelationships 
+    } = applicationDetails
+
+    // Transform skills data
+    const skills = {
+        predefined: predefinedSkills ? {
+            word: predefinedSkills.word,
+            excel: predefinedSkills.excel,
+            powerpoint: predefinedSkills.powerpoint
+        } : null,
+        custom: customSkills || []
+    }
+
+    // Transform languages data
+    const languages = {
+        english: apiLanguages?.english,
+        additional: additionalLanguages || []
+    }
+
 
     return (
        <>
