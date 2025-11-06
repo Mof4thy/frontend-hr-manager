@@ -28,6 +28,37 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
             })
         }
         
+        // Special handling for sex field changes
+        if (field === 'sex') {
+            const currentMaritalStatus = state.personalInfo.socialStatus
+            
+            // Clear marital status if it's incompatible with the new sex
+            if (value === 'ذكر' && currentMaritalStatus === 'أرملة') {
+                // Male selected but has female widowed status - clear it
+                dispatch({
+                    type: "update_personal_info",
+                    payload: { [field]: value, socialStatus: '' }
+                })
+                return
+            } else if (value === 'أنثى' && currentMaritalStatus === 'أرمل') {
+                // Female selected but has male widowed status - clear it
+                dispatch({
+                    type: "update_personal_info",
+                    payload: { [field]: value, socialStatus: '' }
+                })
+                return
+            }
+        }
+        
+        // Special handling for comments field
+        if (field === 'comments') {
+            dispatch({
+                type: "update_comments",
+                payload: value
+            })
+            return
+        }
+        
         dispatch({
             type: "update_personal_info",
             payload: { [field]: value }
@@ -61,9 +92,14 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                     error = t('error-date-of-birth-required')
                 }
                 break
-            case 'placeOfBirth':
-                if (!personalInfo.placeOfBirth || personalInfo.placeOfBirth.trim() === '') {
-                    error = t('error-place-of-birth-required')
+            case 'sex':
+                if (!personalInfo.sex) {
+                    error = t('error-sex-required')
+                }
+                break
+            case 'governorate':
+                if (!personalInfo.governorate || personalInfo.governorate.trim() === '') {
+                    error = t('error-governorate-required')
                 }
                 break
             case 'address':
@@ -133,11 +169,16 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
         const errors = {}
         
         // Validate all fields using the same logic as validateSingleField
-        const fieldsToValidate = [
-            'name', 'dateOfBirth', 'placeOfBirth', 'address', 'nationalId', 
+        let fieldsToValidate = [
+            'name', 'dateOfBirth', 'sex', 'governorate', 'address', 'nationalId', 
             'nationality', 'phoneNumber', 'mobileNumber', 'emergencyNumber',
-            'militaryServiceStatus', 'socialStatus'
+            'socialStatus'
         ]
+        
+        // Add military service validation only for males
+        if (personalInfo.sex === 'ذكر') {
+            fieldsToValidate.push('militaryServiceStatus')
+        }
         
         fieldsToValidate.forEach(field => {
             let error = null
@@ -155,9 +196,14 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                         error = t('error-date-of-birth-required')
                     }
                     break
-                case 'placeOfBirth':
-                    if (!personalInfo.placeOfBirth || personalInfo.placeOfBirth.trim() === '') {
-                        error = t('error-place-of-birth-required')
+                case 'sex':
+                    if (!personalInfo.sex) {
+                        error = t('error-sex-required')
+                    }
+                    break
+                case 'governorate':
+                    if (!personalInfo.governorate || personalInfo.governorate.trim() === '') {
+                        error = t('error-governorate-required')
                     }
                     break
                 case 'address':
@@ -243,12 +289,26 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
         { value: 'معفي مؤقتاً', label: t('temporarily-exempt') || 'Temporarily Exempt' }
     ]
 
-    const socialStatusOptions = [
-        { value: 'أعزب', label: t('single') || 'Single' },
-        { value: 'متزوج', label: t('married') || 'Married' },
-        { value: 'مطلق', label: t('divorced') || 'Divorced' },
-        { value: 'أرمل', label: t('widowed') || 'Widowed' },
-    ]
+    // Dynamic social status options based on sex
+    const getSocialStatusOptions = () => {
+        const baseOptions = [
+            { value: 'أعزب', label: t('single') || 'Single' },
+            { value: 'متزوج', label: t('married') || 'Married' },
+            { value: 'مطلق', label: t('divorced') || 'Divorced' }
+        ]
+        
+        // Add gender-specific widowed option
+        if (state.personalInfo.sex === 'ذكر') {
+            baseOptions.push({ value: 'أرمل', label: t('widowed-male') || 'Widowed' })
+        } else if (state.personalInfo.sex === 'أنثى') {
+            baseOptions.push({ value: 'أرملة', label: t('widowed-female') || 'Widowed' })
+        } else {
+            // Default to generic widowed if sex not selected yet
+            baseOptions.push({ value: 'أرمل', label: t('widowed') || 'Widowed' })
+        }
+        
+        return baseOptions
+    }
 
     const hasVehicleOptions = [
         { value: 'نعم', label: t('yes') },
@@ -298,17 +358,33 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                         />
                     </div>
 
-                    {/* Place of Birth */}
+                    {/* Sex */}
+                    <div>
+                        <CheckboxGroup
+                            label={t('sex')}
+                            options={[
+                                { value: 'ذكر', label: t('male') },
+                                { value: 'أنثى', label: t('female') }
+                            ]}
+                            selectedValue={state.personalInfo.sex || ''}
+                            onChange={(value) => handleInputChange('sex', value)}
+                            onBlur={() => handleFieldBlur('sex')}
+                            required
+                            error={(touchedFields.sex || validationTriggered) ? fieldErrors.sex : null}
+                        />
+                    </div>
+
+                    {/* Governorate */}
                     <div>
                         <Input 
-                            label={t('place-of-birth')} 
+                            label={t('governorate')} 
                             type="text"
-                            value={state.personalInfo.placeOfBirth || ''} 
-                            onChange={(e) => handleInputChange('placeOfBirth', e.target.value)}
-                            onBlur={() => handleFieldBlur('placeOfBirth')}
-                            placeholder={t('enter') + ' ' + t('place-of-birth').toLowerCase()}
+                            value={state.personalInfo.governorate || ''} 
+                            onChange={(e) => handleInputChange('governorate', e.target.value)}
+                            onBlur={() => handleFieldBlur('governorate')}
+                            placeholder={t('enter') + ' ' + t('governorate').toLowerCase()}
                             required
-                            error={(touchedFields.placeOfBirth || validationTriggered) ? fieldErrors.placeOfBirth : null}
+                            error={(touchedFields.governorate || validationTriggered) ? fieldErrors.governorate : null}
                         />
                     </div>
 
@@ -395,24 +471,26 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                         />
                     </div>
 
-                    {/* Military Service Status */}
-                    <div className="md:col-span-2">
-                        <CheckboxGroup
-                            label={t('military-service')}
-                            options={militaryStatusOptions}
-                            selectedValue={state.personalInfo.militaryServiceStatus || ''}
-                            onChange={(value) => handleInputChange('militaryServiceStatus', value)}
-                            onBlur={() => handleFieldBlur('militaryServiceStatus')}
-                            required
-                            error={(touchedFields.militaryServiceStatus || validationTriggered) ? fieldErrors.militaryServiceStatus : null}
-                        />
-                    </div>
+                    {/* Military Service Status - Only for Males */}
+                    {state.personalInfo.sex === 'ذكر' && (
+                        <div className="md:col-span-2">
+                            <CheckboxGroup
+                                label={t('military-service')}
+                                options={militaryStatusOptions}
+                                selectedValue={state.personalInfo.militaryServiceStatus || ''}
+                                onChange={(value) => handleInputChange('militaryServiceStatus', value)}
+                                onBlur={() => handleFieldBlur('militaryServiceStatus')}
+                                required
+                                error={(touchedFields.militaryServiceStatus || validationTriggered) ? fieldErrors.militaryServiceStatus : null}
+                            />
+                        </div>
+                    )}
 
                     {/* Social Status */}
                     <div className="md:col-span-2">
                         <CheckboxGroup
                             label={t('marital-status')}
-                            options={socialStatusOptions}
+                            options={getSocialStatusOptions()}
                             selectedValue={state.personalInfo.socialStatus || ''}
                             onChange={(value) => handleInputChange('socialStatus', value)}
                             onBlur={() => handleFieldBlur('socialStatus')}
@@ -438,6 +516,23 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                             value={state.personalInfo.drivingLicense || ''}
                             onChange={(e) => handleInputChange('drivingLicense', e.target.value)}
                             options={drivingLicenseOptions}
+                        />
+                    </div>
+
+                    {/* Additional Comments */}
+                    <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            {t('comments')} <span className="text-gray-400">({t('optional')})</span>
+                        </label>
+                        <p className="text-sm text-gray-500 mb-3">
+                            {t('comments-subtitle')}
+                        </p>
+                        <textarea
+                            value={state.comments || ''}
+                            onChange={(e) => handleInputChange('comments', e.target.value)}
+                            placeholder={t('comments-placeholder')}
+                            rows={4}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-vertical min-h-[100px] max-h-[200px]"
                         />
                     </div>
                 </form>

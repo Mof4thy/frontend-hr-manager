@@ -8,7 +8,8 @@ const initialState = {
     personalInfo: {
         name: '',
         dateOfBirth: '',
-        placeOfBirth: '',
+        sex: '',
+        governorate: '',
         address: '',
         nationalId: '',
         nationality: '',
@@ -62,6 +63,9 @@ const initialState = {
         filePath: null,  // Server file path after upload
         uploadData: null // Full upload response data
     },
+    
+    // Additional Comments
+    comments: '', // Optional comments from the applicant
    
   };
 
@@ -148,6 +152,8 @@ const initialState = {
                     uploadData: null
                 }
             }
+        case "update_comments":
+            return {...state, comments: action.payload}
         default:
             return state
     }

@@ -12,6 +12,7 @@ import EducationCard from './components/EducationCard'
 import SkillsCard from './components/SkillsCard'
 import LanguagesCard from './components/LanguagesCard'
 import CompanyRelationshipsCard from './components/CompanyRelationshipsCard'
+import CommentsCard from './components/CommentsCard'
 
 import useApplications from '../../hooks/useApplications'
 
@@ -271,6 +272,9 @@ const ApplicationDetails = () => {
 
                     {/* Company Relationships */}
                     <CompanyRelationshipsCard companyRelationships={companyRelationships} />
+
+                    {/* Additional Comments */}
+                    <CommentsCard comments={applicationDetails?.comments} />
 
                 </div>
             </div>

@@ -62,6 +62,22 @@ export const translations = {
     en: 'Upload Documents',
     ar: 'رفع المستندات'
   },
+  'additional-comments': {
+    en: 'Additional Comments',
+    ar: 'تعليقات إضافية'
+  },
+  'comments': {
+    en: 'Comments',
+    ar: 'التعليقات'
+  },
+  'comments-placeholder': {
+    en: 'Enter any additional comments or information you would like to share...',
+    ar: 'أدخل أي تعليقات أو معلومات إضافية تود مشاركتها...'
+  },
+  'comments-subtitle': {
+    en: 'Share any additional information that might be relevant to your application',
+    ar: 'شارك أي معلومات إضافية قد تكون ذات صلة بطلبك'
+  },
   'review-application-title': {
     en: 'Review Application',
     ar: 'مراجعة الطلب'
@@ -84,9 +100,21 @@ export const translations = {
     en: 'Date of Birth',
     ar: 'تاريخ الميلاد'
   },
-  'place-of-birth': {
-    en: 'Place of Birth',
-    ar: 'مكان الميلاد'
+  'sex': {
+    en: 'Sex',
+    ar: 'الجنس'
+  },
+  'male': {
+    en: 'Male',
+    ar: 'ذكر'
+  },
+  'female': {
+    en: 'Female',
+    ar: 'أنثى'
+  },
+  'governorate': {
+    en: 'Governorate',
+    ar: 'المحافظة'
   },
   'address': {
     en: 'Address',
@@ -755,6 +783,14 @@ export const translations = {
     en: 'Widowed',
     ar: 'أرملة'
   },
+  'widowed-male': {
+    en: 'Widowed',
+    ar: 'أرمل'
+  },
+  'widowed-female': {
+    en: 'Widowed',
+    ar: 'أرملة'
+  },
   'other': {
     en: 'Other',
     ar: 'أخرى'
@@ -919,8 +955,16 @@ export const translations = {
     ar: 'يرجى اختيار تاريخ ميلادك'
   },
   'error-place-of-birth-required': {
-    en: 'Please enter your place of birth',
-    ar: 'يرجى إدخال مكان ميلادك'
+    en: 'Please enter your governorate',
+    ar: 'يرجى إدخال محافظتك'
+  },
+  'error-sex-required': {
+    en: 'Please select your sex',
+    ar: 'يرجى اختيار الجنس'
+  },
+  'error-governorate-required': {
+    en: 'Please enter your governorate',
+    ar: 'يرجى إدخال محافظتك'
   },
   'error-address-required': {
     en: 'Please enter your complete address',
