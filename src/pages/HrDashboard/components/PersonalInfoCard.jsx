@@ -19,8 +19,8 @@ const PersonalInfoCard = ({ personalInfo, formatDate }) => {
                     <p className="text-gray-900">{formatDate(personalInfo?.dateOfBirth)}</p>
                 </div>
                 <div>
-                    <label className="text-sm font-medium text-gray-500">Sex</label>
-                    <p className="text-gray-900">{personalInfo?.sex || 'Not provided'}</p>
+                    <label className="text-sm font-medium text-gray-500">Gender</label>
+                    <p className="text-gray-900">{personalInfo?.gender || 'Not provided'}</p>
                 </div>
                 <div>
                     <label className="text-sm font-medium text-gray-500">Governorate</label>
@@ -42,7 +42,7 @@ const PersonalInfoCard = ({ personalInfo, formatDate }) => {
                     <label className="text-sm font-medium text-gray-500">Marital Status</label>
                     <p className="text-gray-900 capitalize">{personalInfo?.socialStatus || 'Not provided'}</p>
                 </div>
-                {personalInfo?.sex === 'ذكر' && (
+                {personalInfo?.gender === 'ذكر' && (
                     <div>
                         <label className="text-sm font-medium text-gray-500">Military Service</label>
                         <p className="text-gray-900 capitalize">{personalInfo?.militaryServiceStatus?.replace('_', ' ') || 'Not provided'}</p>

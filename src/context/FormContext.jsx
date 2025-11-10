@@ -8,7 +8,7 @@ const initialState = {
     personalInfo: {
         name: '',
         dateOfBirth: '',
-        sex: '',
+        gender: '',
         governorate: '',
         address: '',
         nationalId: '',

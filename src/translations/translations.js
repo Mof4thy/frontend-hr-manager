@@ -100,8 +100,8 @@ export const translations = {
     en: 'Date of Birth',
     ar: 'تاريخ الميلاد'
   },
-  'sex': {
-    en: 'Sex',
+  'gender': {
+    en: 'Gender',
     ar: 'الجنس'
   },
   'male': {
@@ -958,8 +958,8 @@ export const translations = {
     en: 'Please enter your governorate',
     ar: 'يرجى إدخال محافظتك'
   },
-  'error-sex-required': {
-    en: 'Please select your sex',
+  'error-gender-required': {
+    en: 'Please select your gender',
     ar: 'يرجى اختيار الجنس'
   },
   'error-governorate-required': {

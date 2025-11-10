@@ -28,11 +28,11 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
             })
         }
         
-        // Special handling for sex field changes
-        if (field === 'sex') {
+        // Special handling for gender field changes
+        if (field === 'gender') {
             const currentMaritalStatus = state.personalInfo.socialStatus
             
-            // Clear marital status if it's incompatible with the new sex
+            // Clear marital status if it's incompatible with the new gender
             if (value === 'ذكر' && currentMaritalStatus === 'أرملة') {
                 // Male selected but has female widowed status - clear it
                 dispatch({
@@ -92,9 +92,9 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                     error = t('error-date-of-birth-required')
                 }
                 break
-            case 'sex':
-                if (!personalInfo.sex) {
-                    error = t('error-sex-required')
+            case 'gender':
+                if (!personalInfo.gender) {
+                    error = t('error-gender-required')
                 }
                 break
             case 'governorate':
@@ -170,13 +170,13 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
         
         // Validate all fields using the same logic as validateSingleField
         let fieldsToValidate = [
-            'name', 'dateOfBirth', 'sex', 'governorate', 'address', 'nationalId', 
+            'name', 'dateOfBirth', 'gender', 'governorate', 'address', 'nationalId', 
             'nationality', 'phoneNumber', 'mobileNumber', 'emergencyNumber',
             'socialStatus'
         ]
         
         // Add military service validation only for males
-        if (personalInfo.sex === 'ذكر') {
+        if (personalInfo.gender === 'ذكر') {
             fieldsToValidate.push('militaryServiceStatus')
         }
         
@@ -196,9 +196,9 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                         error = t('error-date-of-birth-required')
                     }
                     break
-                case 'sex':
-                    if (!personalInfo.sex) {
-                        error = t('error-sex-required')
+                case 'gender':
+                    if (!personalInfo.gender) {
+                        error = t('error-gender-required')
                     }
                     break
                 case 'governorate':
@@ -289,7 +289,7 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
         { value: 'معفي مؤقتاً', label: t('temporarily-exempt') || 'Temporarily Exempt' }
     ]
 
-    // Dynamic social status options based on sex
+    // Dynamic social status options based on gender
     const getSocialStatusOptions = () => {
         const baseOptions = [
             { value: 'أعزب', label: t('single') || 'Single' },
@@ -298,12 +298,12 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
         ]
         
         // Add gender-specific widowed option
-        if (state.personalInfo.sex === 'ذكر') {
+        if (state.personalInfo.gender === 'ذكر') {
             baseOptions.push({ value: 'أرمل', label: t('widowed-male') || 'Widowed' })
-        } else if (state.personalInfo.sex === 'أنثى') {
+        } else if (state.personalInfo.gender === 'أنثى') {
             baseOptions.push({ value: 'أرملة', label: t('widowed-female') || 'Widowed' })
         } else {
-            // Default to generic widowed if sex not selected yet
+            // Default to generic widowed if gender not selected yet
             baseOptions.push({ value: 'أرمل', label: t('widowed') || 'Widowed' })
         }
         
@@ -358,19 +358,19 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                         />
                     </div>
 
-                    {/* Sex */}
+                    {/* Gender */}
                     <div>
                         <CheckboxGroup
-                            label={t('sex')}
+                            label={t('gender')}
                             options={[
                                 { value: 'ذكر', label: t('male') },
                                 { value: 'أنثى', label: t('female') }
                             ]}
-                            selectedValue={state.personalInfo.sex || ''}
-                            onChange={(value) => handleInputChange('sex', value)}
-                            onBlur={() => handleFieldBlur('sex')}
+                            selectedValue={state.personalInfo.gender || ''}
+                            onChange={(value) => handleInputChange('gender', value)}
+                            onBlur={() => handleFieldBlur('gender')}
                             required
-                            error={(touchedFields.sex || validationTriggered) ? fieldErrors.sex : null}
+                            error={(touchedFields.gender || validationTriggered) ? fieldErrors.gender : null}
                         />
                     </div>
 
@@ -472,7 +472,7 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                     </div>
 
                     {/* Military Service Status - Only for Males */}
-                    {state.personalInfo.sex === 'ذكر' && (
+                    {state.personalInfo.gender === 'ذكر' && (
                         <div className="md:col-span-2">
                             <CheckboxGroup
                                 label={t('military-service')}

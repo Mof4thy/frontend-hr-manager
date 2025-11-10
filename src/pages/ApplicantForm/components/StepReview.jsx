@@ -57,7 +57,7 @@ const StepReview = ({ onEditStep }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="rtl-text"><span className="font-medium">{t('name')}:</span> {state.personalInfo.name || t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('date-of-birth')}:</span> {formatDate(state.personalInfo.dateOfBirth)}</div>
-                            <div className="rtl-text"><span className="font-medium">{t('sex')}:</span> {state.personalInfo.sex || t('not-provided')}</div>
+                            <div className="rtl-text"><span className="font-medium">{t('gender')}:</span> {state.personalInfo.gender || t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('governorate')}:</span> {state.personalInfo.governorate || t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('address')}:</span> {state.personalInfo.address || t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('national-id')}:</span> {state.personalInfo.nationalId || t('not-provided')}</div>
@@ -65,7 +65,7 @@ const StepReview = ({ onEditStep }) => {
                             <div className="rtl-text"><span className="font-medium">{t('phone-number')}:</span> {state.personalInfo.whatsappNumber || t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('mobile-number')}:</span> {state.personalInfo.mobileNumber || t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('emergency-contact')}:</span> {state.personalInfo.emergencyNumber || t('not-provided')}</div>
-                            {state.personalInfo.sex === 'ذكر' && (
+                            {state.personalInfo.gender === 'ذكر' && (
                                 <div className="rtl-text"><span className="font-medium">{t('military-service')}:</span> {state.personalInfo.militaryServiceStatus || t('not-provided')}</div>
                             )}
                             <div className="rtl-text"><span className="font-medium">{t('marital-status')}:</span> {state.personalInfo.socialStatus || t('not-provided')}</div>
