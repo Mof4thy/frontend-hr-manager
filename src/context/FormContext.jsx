@@ -8,14 +8,17 @@ const initialState = {
     personalInfo: {
         name: '',
         dateOfBirth: '',
+        age: null,
         gender: '',
         governorate: '',
+        area: '',
         address: '',
         nationalId: '',
         nationality: '',
         whatsappNumber: '',
         mobileNumber: '',
         emergencyNumber: '',
+        email: '',
         militaryServiceStatus: '', // معاف نهائي، سبب الإعفاء النهائي، تأجيل، أدى الخدمة
         socialStatus: '', // أعزب، متزوج، أخرى
         hasVehicle: false, // هل تمتلك سيارة: نعم، لا
@@ -52,7 +55,7 @@ const initialState = {
         contactPosition: ''
     },
     // Education
-    educationStatus: '', // student, graduate
+    educationStatus: '', // higher-qualification, above-intermediate-qualification, preparatory, primary, illiterate, no-qualification
     education: [], // [{ institution: "", department: "", grade: "", fromDate: "", toDate: "" }]
   
     // CV Upload - stores CV info and path after upload

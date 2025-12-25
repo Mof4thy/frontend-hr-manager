@@ -304,12 +304,20 @@ const ApplicationsDashboard = ({ applications, isLoading, error }) => {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     {application.educationStatus ? (
                                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                            application.educationStatus === 'student' ? 'bg-blue-100 text-blue-800' : 
-                                            application.educationStatus === 'graduate' ? 'bg-green-100 text-green-800' : 
+                                            application.educationStatus === 'higher-qualification' ? 'bg-purple-100 text-purple-800' : 
+                                            application.educationStatus === 'above-intermediate-qualification' ? 'bg-blue-100 text-blue-800' : 
+                                            application.educationStatus === 'preparatory' ? 'bg-green-100 text-green-800' : 
+                                            application.educationStatus === 'primary' ? 'bg-yellow-100 text-yellow-800' : 
+                                            application.educationStatus === 'illiterate' ? 'bg-orange-100 text-orange-800' : 
+                                            application.educationStatus === 'no-qualification' ? 'bg-red-100 text-red-800' : 
                                             'bg-gray-100 text-gray-800'
                                         }`}>
-                                            {application.educationStatus === 'student' ? 'Student (طالب)' : 
-                                             application.educationStatus === 'graduate' ? 'Graduate (خريج)' : 
+                                            {application.educationStatus === 'higher-qualification' ? 'مؤهل عالي' : 
+                                             application.educationStatus === 'above-intermediate-qualification' ? 'مؤهل فوق متوسط' : 
+                                             application.educationStatus === 'preparatory' ? 'إعدادية' : 
+                                             application.educationStatus === 'primary' ? 'ابتدائية' : 
+                                             application.educationStatus === 'illiterate' ? 'محو أمية' : 
+                                             application.educationStatus === 'no-qualification' ? 'بدون مؤهل' : 
                                              application.educationStatus}
                                         </span>
                                     ) : (

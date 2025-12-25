@@ -17,12 +17,20 @@ const EducationCard = ({ education, formatDate, educationStatus }) => {
                     <label className="text-sm font-medium text-gray-500">Education Status</label>
                     <p className="text-gray-900 font-medium">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            educationStatus === 'student' ? 'bg-blue-100 text-blue-800' : 
-                            educationStatus === 'graduate' ? 'bg-green-100 text-green-800' : 
+                            educationStatus === 'higher-qualification' ? 'bg-purple-100 text-purple-800' : 
+                            educationStatus === 'above-intermediate-qualification' ? 'bg-blue-100 text-blue-800' : 
+                            educationStatus === 'preparatory' ? 'bg-green-100 text-green-800' : 
+                            educationStatus === 'primary' ? 'bg-yellow-100 text-yellow-800' : 
+                            educationStatus === 'illiterate' ? 'bg-orange-100 text-orange-800' : 
+                            educationStatus === 'no-qualification' ? 'bg-red-100 text-red-800' : 
                             'bg-gray-100 text-gray-800'
                         }`}>
-                            {educationStatus === 'student' ? 'Student (طالب)' : 
-                             educationStatus === 'graduate' ? 'Graduate (خريج)' : 
+                            {educationStatus === 'higher-qualification' ? 'مؤهل عالي' : 
+                             educationStatus === 'above-intermediate-qualification' ? 'مؤهل فوق متوسط' : 
+                             educationStatus === 'preparatory' ? 'إعدادية' : 
+                             educationStatus === 'primary' ? 'ابتدائية' : 
+                             educationStatus === 'illiterate' ? 'محو أمية' : 
+                             educationStatus === 'no-qualification' ? 'بدون مؤهل' : 
                              educationStatus || 'Not specified'}
                         </span>
                     </p>

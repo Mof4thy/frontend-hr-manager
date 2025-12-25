@@ -1,6 +1,8 @@
 import React from 'react'
 
 const PersonalInfoCard = ({ personalInfo, formatDate }) => {
+    
+
     return (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
@@ -19,12 +21,20 @@ const PersonalInfoCard = ({ personalInfo, formatDate }) => {
                     <p className="text-gray-900">{formatDate(personalInfo?.dateOfBirth)}</p>
                 </div>
                 <div>
+                    <label className="text-sm font-medium text-gray-500">Age</label>
+                    <p className="text-gray-900">{personalInfo?.age || 'Not provided'}</p>
+                </div>
+                <div>
                     <label className="text-sm font-medium text-gray-500">Gender</label>
                     <p className="text-gray-900">{personalInfo?.gender || 'Not provided'}</p>
                 </div>
                 <div>
                     <label className="text-sm font-medium text-gray-500">Governorate</label>
                     <p className="text-gray-900">{personalInfo?.governorate || 'Not provided'}</p>
+                </div>
+                <div>
+                    <label className="text-sm font-medium text-gray-500">Area</label>
+                    <p className="text-gray-900">{personalInfo?.area || 'Not provided'}</p>
                 </div>
                 <div>
                     <label className="text-sm font-medium text-gray-500">Address</label>

@@ -22,6 +22,10 @@ const ContactInfoCard = ({ personalInfo }) => {
                     <label className="text-sm font-medium text-gray-500">Emergency Contact</label>
                     <p className="text-gray-900">{personalInfo?.emergencyNumber || 'Not provided'}</p>
                 </div>
+                <div>
+                    <label className="text-sm font-medium text-gray-500">Email Address</label>
+                    <p className="text-gray-900">{personalInfo?.email || 'Not provided'}</p>
+                </div>
             </div>
         </div>
     )

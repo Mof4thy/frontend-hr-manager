@@ -115,6 +115,12 @@ const Profile = ()=>{
                                     <h4 className="text-md font-semibold">{userData.email}</h4>
                                 </div>
 
+                                
+                                <div className="flex flex-col">
+                                    <h4 className="text-lg font-bold">User Name :</h4>
+                                    <h4 className="text-md font-semibold">{userData.username}</h4>
+                                </div>
+
                             </div>
 
                             <div className="flex flex-col gap-4 md:gap-8 flex-1">
@@ -129,7 +135,10 @@ const Profile = ()=>{
                                         <h4 className="text-lg font-bold">Is Active</h4>
                                         <h4 className="text-md">{userData.isActive ? 'Active' : 'Inactive'}</h4>
                                 </div>
-                                
+                                <Button className="w-fit flex justify-center items-center" onClick={()=>{changepassmodalref.current.showModal()}}>
+                                    <Lock size={16} className='mr-2' />
+                                    change password
+                                </Button>
                             </div>
 
                             <div className="flex flex-col gap-4 md:gap-8 flex-1 justify-between">
@@ -137,10 +146,7 @@ const Profile = ()=>{
                                 <button className='w-fit py-2 px-4 bg-red-500 text-white rounded-lg cursor-pointer hover:bg-red-600' onClick={handleLogoutClick}>Logout</button>
                                 
                                 
-                                <Button className="w-fit flex justify-center items-center" onClick={()=>{changepassmodalref.current.showModal()}}>
-                                    <Lock size={16} className='mr-2' />
-                                    change password
-                                </Button>
+                                
                             </div>
 
                             

@@ -200,8 +200,12 @@ const StepEducation = ({ checkValidStep, setValidMessage }) => {
                                 onChange={(e) => handleEducationStatusChange(e.target.value)}
                                 onBlur={() => validateSingleField('educationStatus')}
                                 options={[
-                                    { value: 'student', label: t('student') },
-                                    { value: 'graduate', label: t('graduate') }
+                                    { value: 'higher-qualification', label: t('higher-qualification') },
+                                    { value: 'above-intermediate-qualification', label: t('above-intermediate-qualification') },
+                                    { value: 'preparatory', label: t('preparatory') },
+                                    { value: 'primary', label: t('primary') },
+                                    { value: 'illiterate', label: t('illiterate') },
+                                    { value: 'no-qualification', label: t('no-qualification') }
                                 ]}
                                 required
                                 error={fieldErrors.educationStatus}

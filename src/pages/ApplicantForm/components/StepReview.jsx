@@ -17,6 +17,22 @@ const StepReview = ({ onEditStep }) => {
         return date.toLocaleDateString('en-GB' , { day: '2-digit', month: '2-digit', year: 'numeric' })
     }
 
+    // Calculate age from date of birth
+    const calculateAge = (dateOfBirth) => {
+        if (!dateOfBirth) return null
+        
+        const today = new Date()
+        const birthDate = new Date(dateOfBirth)
+        let age = today.getFullYear() - birthDate.getFullYear()
+        const monthDiff = today.getMonth() - birthDate.getMonth()
+        
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--
+        }
+        
+        return age
+    }
+
     const formatLevel = (level) => {
         if (!level) return t('not-specified')
         return level.replace('_', ' ').split(' ').map(word => 
@@ -57,14 +73,17 @@ const StepReview = ({ onEditStep }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="rtl-text"><span className="font-medium">{t('name')}:</span> {state.personalInfo.name || t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('date-of-birth')}:</span> {formatDate(state.personalInfo.dateOfBirth)}</div>
+                            <div className="rtl-text"><span className="font-medium">{t('age')}:</span> {calculateAge(state.personalInfo.dateOfBirth) ? `${calculateAge(state.personalInfo.dateOfBirth)} ${t('years-old')}` : t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('gender')}:</span> {state.personalInfo.gender || t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('governorate')}:</span> {state.personalInfo.governorate || t('not-provided')}</div>
+                            <div className="rtl-text"><span className="font-medium">{t('area')}:</span> {state.personalInfo.area || t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('address')}:</span> {state.personalInfo.address || t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('national-id')}:</span> {state.personalInfo.nationalId || t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('nationality')}:</span> {state.personalInfo.nationality || t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('phone-number')}:</span> {state.personalInfo.whatsappNumber || t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('mobile-number')}:</span> {state.personalInfo.mobileNumber || t('not-provided')}</div>
                             <div className="rtl-text"><span className="font-medium">{t('emergency-contact')}:</span> {state.personalInfo.emergencyNumber || t('not-provided')}</div>
+                            <div className="rtl-text"><span className="font-medium">{t('email')}:</span> {state.personalInfo.email || t('not-provided')}</div>
                             {state.personalInfo.gender === 'ذكر' && (
                                 <div className="rtl-text"><span className="font-medium">{t('military-service')}:</span> {state.personalInfo.militaryServiceStatus || t('not-provided')}</div>
                             )}

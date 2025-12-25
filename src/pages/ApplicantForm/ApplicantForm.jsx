@@ -86,9 +86,29 @@ const ApplicantForm = () => {
                 }
             }
             
+            // Calculate age if not already calculated
+            const calculateAge = (dateOfBirth) => {
+                if (!dateOfBirth) return null
+                const today = new Date()
+                const birthDate = new Date(dateOfBirth)
+                let age = today.getFullYear() - birthDate.getFullYear()
+                const monthDiff = today.getMonth() - birthDate.getMonth()
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--
+                }
+                return age
+            }
+
+            // Ensure age is calculated before submission
+            const finalAge = state.personalInfo.age || calculateAge(state.personalInfo.dateOfBirth)
+
             // Prepare application data with CV path
             const applicationData = {
                 ...state,
+                personalInfo: {
+                    ...state.personalInfo,
+                    age: finalAge
+                },
                 cvPath: cvPath,
                 cv: undefined // Remove the file object from the data
             }

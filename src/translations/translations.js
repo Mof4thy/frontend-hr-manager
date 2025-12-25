@@ -100,6 +100,14 @@ export const translations = {
     en: 'Date of Birth',
     ar: 'تاريخ الميلاد'
   },
+  'age': {
+    en: 'Age',
+    ar: 'العمر'
+  },
+  'years-old': {
+    en: 'years old',
+    ar: 'سنة'
+  },
   'gender': {
     en: 'Gender',
     ar: 'الجنس'
@@ -115,6 +123,10 @@ export const translations = {
   'governorate': {
     en: 'Governorate',
     ar: 'المحافظة'
+  },
+  'area': {
+    en: 'Area',
+    ar: 'المنطقة'
   },
   'address': {
     en: 'Address',
@@ -143,6 +155,10 @@ export const translations = {
   'emergency-contact': {
     en: 'Emergency Contact Number',
     ar: 'رقم جهة الاتصال للطوارئ'
+  },
+  'email': {
+    en: 'Email Address',
+    ar: 'البريد الإلكتروني'
   },
   'military-service': {
     en: 'Military Service Status',
@@ -321,6 +337,30 @@ export const translations = {
   'graduate': {
     en: 'Graduate',
     ar: 'خريج'
+  },
+  'higher-qualification': {
+    en: 'Higher Qualification',
+    ar: 'مؤهل عالي'
+  },
+  'above-intermediate-qualification': {
+    en: 'Above Intermediate Qualification',
+    ar: 'مؤهل فوق متوسط'
+  },
+  'preparatory': {
+    en: 'Preparatory',
+    ar: 'إعدادية'
+  },
+  'primary': {
+    en: 'Primary',
+    ar: 'ابتدائية'
+  },
+  'illiterate': {
+    en: 'Illiterate',
+    ar: 'محو أمية'
+  },
+  'no-qualification': {
+    en: 'No Qualification',
+    ar: 'بدون مؤهل'
   },
   'select-education-status': {
     en: 'Select your status',
@@ -966,9 +1006,21 @@ export const translations = {
     en: 'Please enter your governorate',
     ar: 'يرجى إدخال محافظتك'
   },
+  'error-area-required': {
+    en: 'Please enter your area',
+    ar: 'يرجى إدخال منطقتك'
+  },
   'error-address-required': {
     en: 'Please enter your complete address',
     ar: 'يرجى إدخال عنوانك الكامل'
+  },
+  'error-email-required': {
+    en: 'Please enter your email address',
+    ar: 'يرجى إدخال بريدك الإلكتروني'
+  },
+  'error-email-invalid': {
+    en: 'Please enter a valid email address',
+    ar: 'يرجى إدخال بريد إلكتروني صحيح'
   },
   'error-national-id-required': {
     en: 'Please enter your national ID number',

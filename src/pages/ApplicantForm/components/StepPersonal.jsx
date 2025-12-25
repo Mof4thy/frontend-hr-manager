@@ -17,6 +17,22 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
     // State to track if validation has been triggered (e.g., by clicking next)
     const [validationTriggered, setValidationTriggered] = useState(false)
 
+    // Calculate age from date of birth
+    const calculateAge = (dateOfBirth) => {
+        if (!dateOfBirth) return null
+        
+        const today = new Date()
+        const birthDate = new Date(dateOfBirth)
+        let age = today.getFullYear() - birthDate.getFullYear()
+        const monthDiff = today.getMonth() - birthDate.getMonth()
+        
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--
+        }
+        
+        return age
+    }
+
     // Handle input changes for individual fields
     const handleInputChange = (field, value) => {
         // Clear the error for this field when user starts typing
@@ -55,6 +71,16 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
             dispatch({
                 type: "update_comments",
                 payload: value
+            })
+            return
+        }
+        
+        // Special handling for date of birth - calculate and store age
+        if (field === 'dateOfBirth') {
+            const calculatedAge = calculateAge(value)
+            dispatch({
+                type: "update_personal_info",
+                payload: { [field]: value, age: calculatedAge }
             })
             return
         }
@@ -102,6 +128,11 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                     error = t('error-governorate-required')
                 }
                 break
+            case 'area':
+                if (!personalInfo.area) {
+                    error = t('error-area-required')
+                }
+                break
             case 'address':
                 if (!personalInfo.address || personalInfo.address.trim() === '') {
                     error = t('error-address-required')
@@ -138,6 +169,15 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                     error = t('error-emergency-number-length')
                 }
                 break
+            case 'email':
+                // Email is optional, only validate format if provided
+                if (personalInfo.email && personalInfo.email.trim() !== '') {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                    if (!emailRegex.test(personalInfo.email)) {
+                        error = t('error-email-invalid')
+                    }
+                }
+                break
             case 'militaryServiceStatus':
                 if (!personalInfo.militaryServiceStatus) {
                     error = t('error-military-service-required')
@@ -170,10 +210,15 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
         
         // Validate all fields using the same logic as validateSingleField
         let fieldsToValidate = [
-            'name', 'dateOfBirth', 'gender', 'governorate', 'address', 'nationalId', 
+            'name', 'dateOfBirth', 'gender', 'governorate', 'area', 'address', 'nationalId', 
             'nationality', 'phoneNumber', 'mobileNumber', 'emergencyNumber',
             'socialStatus'
         ]
+        
+        // Add email to validation only if it has a value (for format validation)
+        if (personalInfo.email && personalInfo.email.trim() !== '') {
+            fieldsToValidate.push('email')
+        }
         
         // Add military service validation only for males
         if (personalInfo.gender === 'ذكر') {
@@ -204,6 +249,11 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                 case 'governorate':
                     if (!personalInfo.governorate || personalInfo.governorate.trim() === '') {
                         error = t('error-governorate-required')
+                    }
+                    break
+                case 'area':
+                    if (!personalInfo.area) {
+                        error = t('error-area-required')
                     }
                     break
                 case 'address':
@@ -240,6 +290,15 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                 case 'emergencyNumber':
                     if (personalInfo.emergencyNumber && personalInfo.emergencyNumber.length !== 11) {
                         error = t('error-emergency-number-length')
+                    }
+                    break
+                case 'email':
+                    // Email is optional, only validate format if provided
+                    if (personalInfo.email && personalInfo.email.trim() !== '') {
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                        if (!emailRegex.test(personalInfo.email)) {
+                            error = t('error-email-invalid')
+                        }
                     }
                     break
                 case 'militaryServiceStatus':
@@ -287,6 +346,24 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
         { value: 'مؤجل', label: t('deferred') || 'Deferred' },
         { value: 'أدى الخدمة', label: t('completed-service') || 'Completed Service' },
         { value: 'معفي مؤقتاً', label: t('temporarily-exempt') || 'Temporarily Exempt' }
+    ]
+
+    const areaOptions = [
+        { value: 'وسط البلد', label: 'وسط البلد' },
+        { value: 'المعادي', label: 'المعادي' },
+        { value: 'مصر الجديدة', label: 'مصر الجديدة' },
+        { value: 'الزمالك', label: 'الزمالك' },
+        { value: 'المهندسين', label: 'المهندسين' },
+        { value: 'الدقي', label: 'الدقي' },
+        { value: 'الجيزة', label: 'الجيزة' },
+        { value: 'شبرا', label: 'شبرا' },
+        { value: 'مدينة نصر', label: 'مدينة نصر' },
+        { value: 'التجمع الخامس', label: 'التجمع الخامس' },
+        { value: 'الشيخ زايد', label: 'الشيخ زايد' },
+        { value: 'أكتوبر', label: 'أكتوبر' },
+        { value: 'العبور', label: 'العبور' },
+        { value: 'القاهرة الجديدة', label: 'القاهرة الجديدة' },
+        { value: 'أخرى', label: t('other') || 'Other' }
     ]
 
     // Dynamic social status options based on gender
@@ -356,6 +433,12 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                             required
                             error={(touchedFields.dateOfBirth || validationTriggered) ? fieldErrors.dateOfBirth : null}
                         />
+                        {/* Display calculated age */}
+                        {state.personalInfo.dateOfBirth && (
+                            <div className="mt-2 text-sm text-gray-600">
+                                <span className="font-medium">{t('age')}:</span> {calculateAge(state.personalInfo.dateOfBirth)} {t('years-old')}
+                            </div>
+                        )}
                     </div>
 
                     {/* Gender */}
@@ -385,6 +468,19 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                             placeholder={t('enter') + ' ' + t('governorate').toLowerCase()}
                             required
                             error={(touchedFields.governorate || validationTriggered) ? fieldErrors.governorate : null}
+                        />
+                    </div>
+
+                    {/* Area */}
+                    <div>
+                        <Select
+                            label={t('area')}
+                            value={state.personalInfo.area || ''}
+                            onChange={(e) => handleInputChange('area', e.target.value)}
+                            onBlur={() => handleFieldBlur('area')}
+                            options={areaOptions}
+                            required
+                            error={(touchedFields.area || validationTriggered) ? fieldErrors.area : null}
                         />
                     </div>
 
@@ -468,6 +564,19 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                             onBlur={() => handleFieldBlur('emergencyNumber')}
                             placeholder={t('enter') + ' ' + t('emergency-contact').toLowerCase()}
                             error={(touchedFields.emergencyNumber || validationTriggered) ? fieldErrors.emergencyNumber : null}
+                        />
+                    </div>
+
+                    {/* Email Address */}
+                    <div className="md:col-span-1">
+                        <Input 
+                            type="email"
+                            label={t('email')} 
+                            value={state.personalInfo.email || ''} 
+                            onChange={(e) => handleInputChange('email', e.target.value)}
+                            onBlur={() => handleFieldBlur('email')}
+                            placeholder={t('enter') + ' ' + t('email').toLowerCase()}
+                            error={(touchedFields.email || validationTriggered) ? fieldErrors.email : null}
                         />
                     </div>
 
