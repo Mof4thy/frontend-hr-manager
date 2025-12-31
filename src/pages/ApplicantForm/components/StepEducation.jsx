@@ -4,6 +4,7 @@ import Select from "../../../components/Select"
 import { useForm } from "../../../context/FormContext"
 import Button from "../../../components/button"
 import { useLanguage } from "../../../context/LanguageContext"
+import { educationStatusOptions, getTranslatedOptions } from "../../../data/staticData"
 
 const StepEducation = ({ checkValidStep, setValidMessage }) => {
     const { state, dispatch } = useForm()
@@ -199,14 +200,7 @@ const StepEducation = ({ checkValidStep, setValidMessage }) => {
                                 value={state.educationStatus || ''}
                                 onChange={(e) => handleEducationStatusChange(e.target.value)}
                                 onBlur={() => validateSingleField('educationStatus')}
-                                options={[
-                                    { value: 'higher-qualification', label: t('higher-qualification') },
-                                    { value: 'above-intermediate-qualification', label: t('above-intermediate-qualification') },
-                                    { value: 'preparatory', label: t('preparatory') },
-                                    { value: 'primary', label: t('primary') },
-                                    { value: 'illiterate', label: t('illiterate') },
-                                    { value: 'no-qualification', label: t('no-qualification') }
-                                ]}
+                                options={getTranslatedOptions(educationStatusOptions, t)}
                                 required
                                 error={fieldErrors.educationStatus}
                             />

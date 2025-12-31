@@ -4,6 +4,7 @@ import Select from "../../../components/Select"
 import CheckboxGroup from "../../../components/CheckboxGroup"
 import { useForm } from "../../../context/FormContext"
 import { useLanguage } from "../../../context/LanguageContext"
+import { governorateOptions, areaOptions } from "../../../data/staticData"
 
 const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
 
@@ -348,23 +349,12 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
         { value: 'معفي مؤقتاً', label: t('temporarily-exempt') || 'Temporarily Exempt' }
     ]
 
-    const areaOptions = [
-        { value: 'وسط البلد', label: 'وسط البلد' },
-        { value: 'المعادي', label: 'المعادي' },
-        { value: 'مصر الجديدة', label: 'مصر الجديدة' },
-        { value: 'الزمالك', label: 'الزمالك' },
-        { value: 'المهندسين', label: 'المهندسين' },
-        { value: 'الدقي', label: 'الدقي' },
-        { value: 'الجيزة', label: 'الجيزة' },
-        { value: 'شبرا', label: 'شبرا' },
-        { value: 'مدينة نصر', label: 'مدينة نصر' },
-        { value: 'التجمع الخامس', label: 'التجمع الخامس' },
-        { value: 'الشيخ زايد', label: 'الشيخ زايد' },
-        { value: 'أكتوبر', label: 'أكتوبر' },
-        { value: 'العبور', label: 'العبور' },
-        { value: 'القاهرة الجديدة', label: 'القاهرة الجديدة' },
-        { value: 'أخرى', label: t('other') || 'Other' }
-    ]
+    // Area options with translated "Other" option
+    const areaOptionsWithOther = areaOptions.map(option => 
+        option.value === 'أخرى' 
+            ? { ...option, label: t('other') || 'Other' }
+            : option
+    )
 
     // Dynamic social status options based on gender
     const getSocialStatusOptions = () => {
@@ -459,13 +449,12 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
 
                     {/* Governorate */}
                     <div>
-                        <Input 
-                            label={t('governorate')} 
-                            type="text"
-                            value={state.personalInfo.governorate || ''} 
+                        <Select
+                            label={t('governorate')}
+                            value={state.personalInfo.governorate || ''}
                             onChange={(e) => handleInputChange('governorate', e.target.value)}
                             onBlur={() => handleFieldBlur('governorate')}
-                            placeholder={t('enter') + ' ' + t('governorate').toLowerCase()}
+                            options={governorateOptions}
                             required
                             error={(touchedFields.governorate || validationTriggered) ? fieldErrors.governorate : null}
                         />
@@ -478,7 +467,7 @@ const StepPersonal = ({ checkValidStep, setValidMessage }) =>{
                             value={state.personalInfo.area || ''}
                             onChange={(e) => handleInputChange('area', e.target.value)}
                             onBlur={() => handleFieldBlur('area')}
-                            options={areaOptions}
+                            options={areaOptionsWithOther}
                             required
                             error={(touchedFields.area || validationTriggered) ? fieldErrors.area : null}
                         />

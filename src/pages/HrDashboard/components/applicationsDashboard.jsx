@@ -6,6 +6,7 @@ import { Download } from 'lucide-react'
 import { exportApplicationsToExcel } from '../../../services/applicationService'
 import { useParams } from 'react-router-dom'
 import {getAcceptedToJoinApplications} from "../../../services/applicationService"
+import ApplicationsFilter from './ApplicationsFilter'
 
 const ApplicationsDashboard = ({ applications, isLoading, error }) => {
     // Sample data matching the design
@@ -14,6 +15,14 @@ const ApplicationsDashboard = ({ applications, isLoading, error }) => {
     const [searchid, setSearchid] = useState('')
     const [filteredApplications, setFilteredApplications] = useState([])
     const [isExporting, setIsExporting] = useState(false)
+    const [activeFilters, setActiveFilters] = useState({
+        area: '',
+        governorate: '',
+        gender: '',
+        educationStatus: '',
+        minAge: '',
+        maxAge: ''
+    })
 
 
     useEffect(()=>{
@@ -75,6 +84,79 @@ const ApplicationsDashboard = ({ applications, isLoading, error }) => {
         }
     }
 
+    // Apply filters to applications
+    const applyFilters = (apps, filters) => {
+        if (!apps || !Array.isArray(apps)) return []
+        
+        return apps.filter(application => {
+            const personalInfo = application.personalInfo || {}
+            
+            // Filter by area
+            if (filters.area && personalInfo.area !== filters.area) {
+                return false
+            }
+            
+            // Filter by governorate (partial match for flexibility)
+            if (filters.governorate) {
+                const appGovernorate = (personalInfo.governorate || '').toLowerCase()
+                const filterGovernorate = filters.governorate.toLowerCase()
+                if (!appGovernorate.includes(filterGovernorate) && !filterGovernorate.includes(appGovernorate)) {
+                    return false
+                }
+            }
+            
+            // Filter by gender
+            if (filters.gender && personalInfo.gender !== filters.gender) {
+                return false
+            }
+            
+            // Filter by education status
+            if (filters.educationStatus && application.educationStatus !== filters.educationStatus) {
+                return false
+            }
+            
+            // Filter by age range
+            const age = personalInfo.age
+            if (age !== null && age !== undefined) {
+                if (filters.minAge && age < parseInt(filters.minAge)) {
+                    return false
+                }
+                if (filters.maxAge && age > parseInt(filters.maxAge)) {
+                    return false
+                }
+            }
+            
+            return true
+        })
+    }
+
+    // Handle filter changes
+    const handleFilterChange = (filters) => {
+        setActiveFilters(filters)
+        setSearch('')
+        setSearchid('')
+        
+        if (!applications || !Array.isArray(applications)) return
+        
+        // Get base applications based on status
+        let baseApplications = applications
+        if (status) {
+            if (status === "pending_applications") {
+                baseApplications = applications.filter(app => app.status === "pending")
+            } else if (status === "reviewed_applications") {
+                baseApplications = applications.filter(app => app.status === "reviewed")
+            } else if (status === "rejected_applications") {
+                baseApplications = applications.filter(app => app.status === "rejected")
+            } else if (status === "accepted_for_interview") {
+                baseApplications = applications.filter(app => app.status === "accepted_for_interview")
+            }
+        }
+        
+        // Apply additional filters
+        const filtered = applyFilters(baseApplications, filters)
+        setFilteredApplications(filtered)
+    }
+
 
 
 
@@ -84,12 +166,15 @@ const ApplicationsDashboard = ({ applications, isLoading, error }) => {
         
         if (!applications || !Array.isArray(applications)) return
         
+        // Get base filtered applications (with active filters applied)
+        let baseApplications = applyFilters(applications, activeFilters)
+        
         if (!value.trim()) {
-            setFilteredApplications(applications)
+            setFilteredApplications(baseApplications)
             return
         }
         
-        setFilteredApplications(applications.filter((application) => 
+        setFilteredApplications(baseApplications.filter((application) => 
             (application.personalInfo?.name || '').toLowerCase().includes(value.toLowerCase()) || 
             (application.personalInfo?.phoneNumber || '').toLowerCase().includes(value.toLowerCase()) || 
             (application.personalInfo?.whatsappNumber || '').toLowerCase().includes(value.toLowerCase()) || 
@@ -103,12 +188,15 @@ const ApplicationsDashboard = ({ applications, isLoading, error }) => {
         
         if (!applications || !Array.isArray(applications)) return
         
+        // Get base filtered applications (with active filters applied)
+        let baseApplications = applyFilters(applications, activeFilters)
+        
         if (!value.trim()) {
-            setFilteredApplications(applications)
+            setFilteredApplications(baseApplications)
             return
         }
         
-        setFilteredApplications(applications.filter((application) =>
+        setFilteredApplications(baseApplications.filter((application) =>
              application.applicationId.toString().toLowerCase().includes(value.toLowerCase())
         ))
     }
@@ -202,167 +290,185 @@ const ApplicationsDashboard = ({ applications, isLoading, error }) => {
 
     return (
         
-        <div className="w-full bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-            {/* Header */}
-            <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                    <h1 className="text-xl  font-bold text-gray-900">
-                        Applications ({filteredApplications.length})
-                    </h1>
-                    <div className="w-full flex flex-col md:flex-row md:w-2/3 gap-4">
-                        <Input
-                            type="text"
-                            className="border-2 border-gray-300 rounded-2xl  "
-                            placeholder="Search by ID"
-                            value={searchid}
-                            onChange={(e) => handleSearchbyid(e.target.value)}
-                        />
-                        <div className=" w-full flex-1  ">
+        <div className="w-full  flex flex-col gap-4   overflow-hidden">
+            {/* Filter Component */}
+            <ApplicationsFilter 
+                onFilterChange={handleFilterChange}
+            />
+
+            <div className=" bg-white w-full rounded-2xl  border border-gray-100 overflow-hidden">
+                {/* Header */}
+                <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+                        <h1 className="text-xl  font-bold text-gray-900">
+                            Applications ({filteredApplications.length})
+                        </h1>
+                        <div className="w-full flex flex-col md:flex-row md:w-2/3 gap-4">
                             <Input
                                 type="text"
-                                className="border-2 border-gray-300 rounded-2xl  w-full "
-                                placeholder="Search by name or phone number or position"
-                                value={search}
-                                onChange={(e) => handleSearch(e.target.value)}
+                                className="border-2 border-gray-300 rounded-2xl  "
+                                placeholder="Search by ID"
+                                value={searchid}
+                                onChange={(e) => handleSearchbyid(e.target.value)}
                             />
-                        </div>
-                        <Button
-                            onClick={handleExportToExcel}
-                            disabled={isExporting || applications.length === 0}
-                            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
-                        >
-                            <Download size={16} />
-                            {isExporting ? 'Exporting...' : 'Export Excel'}
-                        </Button>
+                            <div className=" w-full flex-1  ">
+                                <Input
+                                    type="text"
+                                    className="border-2 border-gray-300 rounded-2xl  w-full "
+                                    placeholder="Search by name or phone number or position"
+                                    value={search}
+                                    onChange={(e) => handleSearch(e.target.value)}
+                                />
+                            </div>
+                            <Button
+                                onClick={handleExportToExcel}
+                                disabled={isExporting || applications.length === 0}
+                                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
+                            >
+                                <Download size={16} />
+                                {isExporting ? 'Exporting...' : 'Export Excel'}
+                            </Button>
 
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto ">
-                <table className="w-full">
-                    <thead className="bg-gray-200 border-b border-gray-200">
-                        <tr>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                ID
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Candidate
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Position
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                WhatsApp Number
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Education Status
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Status
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Applied
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    
-                    <tbody className="bg-white divide-y divide-gray-200 ">
-                        {Array.isArray(filteredApplications) && filteredApplications.map((application) => (
-                            <tr key={application.applicationId} className="hover:bg-gray-50 transition-colors">
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm font-medium text-gray-900">
-                                        #{application.applicationId}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    
-                                    <div className="flex flex-col">
-                                        <div className="text-sm font-semibold text-gray-900">
-                                            {application.personalInfo.name}
-                                        </div>
-                                        {/* <div className="text-sm text-gray-500">
-                                            {application.email}
-                                        </div> */}
-                                    </div>
-
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm font-medium text-gray-900">
-                                        {application.jobTitle}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">
-                                        {application.personalInfo.whatsappNumber}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    {application.educationStatus ? (
-                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                            application.educationStatus === 'higher-qualification' ? 'bg-purple-100 text-purple-800' : 
-                                            application.educationStatus === 'above-intermediate-qualification' ? 'bg-blue-100 text-blue-800' : 
-                                            application.educationStatus === 'preparatory' ? 'bg-green-100 text-green-800' : 
-                                            application.educationStatus === 'primary' ? 'bg-yellow-100 text-yellow-800' : 
-                                            application.educationStatus === 'illiterate' ? 'bg-orange-100 text-orange-800' : 
-                                            application.educationStatus === 'no-qualification' ? 'bg-red-100 text-red-800' : 
-                                            'bg-gray-100 text-gray-800'
-                                        }`}>
-                                            {application.educationStatus === 'higher-qualification' ? 'مؤهل عالي' : 
-                                             application.educationStatus === 'above-intermediate-qualification' ? 'مؤهل فوق متوسط' : 
-                                             application.educationStatus === 'preparatory' ? 'إعدادية' : 
-                                             application.educationStatus === 'primary' ? 'ابتدائية' : 
-                                             application.educationStatus === 'illiterate' ? 'محو أمية' : 
-                                             application.educationStatus === 'no-qualification' ? 'بدون مؤهل' : 
-                                             application.educationStatus}
-                                        </span>
-                                    ) : (
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                            Not specified
-                                        </span>
-                                    )}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(application.status)}`}>
-                                        {application.status}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">
-                                        {new Date(application.createdAt).toLocaleDateString('en-GB')
-                                        }
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <div className="flex items-center space-x-2">
-                                        <button 
-                                        onClick={() => handleViewApplication(application.applicationId)}
-                                        className="inline-flex items-center text-blue-600 hover:text-blue-900 transition-colors cursor-pointer">
-                                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                            View
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                        {(!Array.isArray(filteredApplications) || filteredApplications.length === 0) && (
+                {/* Table */}
+                <div className="overflow-x-auto ">
+                    <table className="w-full">
+                        <thead className="bg-gray-200 border-b border-gray-200">
                             <tr>
-                                <td colSpan="8" className="px-6 py-8 text-center text-gray-500">
-                                    {isLoading ? 'Loading applications...' : 'No applications found'}
-                                </td>
+                                <th className="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    ID
+                                </th>
+                                <th className="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Candidate
+                                </th>
+                                <th className="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Position
+                                </th>
+                                <th className="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    WhatsApp
+                                </th>
+                                <th className="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Governorate
+                                </th>
+                                <th className="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Area
+                                </th>
+                                <th className="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Education
+                                </th>
+                                <th className="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Status
+                                </th>
+                                <th className="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Applied
+                                </th>
+                                <th className="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Actions
+                                </th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        
+                        <tbody className="bg-white divide-y divide-gray-200 ">
+                            {Array.isArray(filteredApplications) && filteredApplications.map((application) => (
+                                <tr key={application.applicationId} className="hover:bg-gray-50 transition-colors">
+                                    <td className="px-4 py-4 whitespace-nowrap">
+                                        <div className="text-sm font-medium text-gray-900">
+                                            #{application.applicationId}
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-4 whitespace-nowrap">
+                                        <div className="flex flex-col">
+                                            <div className="text-sm font-semibold text-gray-900">
+                                                {application.personalInfo?.name || '-'}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-4 whitespace-nowrap">
+                                        <div className="text-sm font-medium text-gray-900">
+                                            {application.jobTitle}
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-900">
+                                            {application.personalInfo?.whatsappNumber || '-'}
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-900">
+                                            {application.personalInfo?.governorate || '-'}
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-900">
+                                            {application.personalInfo?.area || '-'}
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-4 whitespace-nowrap">
+                                        {application.educationStatus ? (
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                                application.educationStatus === 'higher-qualification' ? 'bg-purple-100 text-purple-800' : 
+                                                application.educationStatus === 'above-intermediate-qualification' ? 'bg-blue-100 text-blue-800' : 
+                                                application.educationStatus === 'preparatory' ? 'bg-green-100 text-green-800' : 
+                                                application.educationStatus === 'primary' ? 'bg-yellow-100 text-yellow-800' : 
+                                                application.educationStatus === 'illiterate' ? 'bg-orange-100 text-orange-800' : 
+                                                application.educationStatus === 'no-qualification' ? 'bg-red-100 text-red-800' : 
+                                                'bg-gray-100 text-gray-800'
+                                            }`}>
+                                                {application.educationStatus === 'higher-qualification' ? 'مؤهل عالي' : 
+                                                application.educationStatus === 'above-intermediate-qualification' ? 'مؤهل فوق متوسط' : 
+                                                application.educationStatus === 'preparatory' ? 'إعدادية' : 
+                                                application.educationStatus === 'primary' ? 'ابتدائية' : 
+                                                application.educationStatus === 'illiterate' ? 'محو أمية' : 
+                                                application.educationStatus === 'no-qualification' ? 'بدون مؤهل' : 
+                                                application.educationStatus}
+                                            </span>
+                                        ) : (
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                Not specified
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td className="px-4 py-4 whitespace-nowrap">
+                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(application.status)}`}>
+                                            {application.status}
+                                        </span>
+                                    </td>
+                                    <td className="px-4 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-900">
+                                            {new Date(application.createdAt).toLocaleDateString('en-GB')}
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <div className="flex items-center space-x-2">
+                                            <button 
+                                            onClick={() => handleViewApplication(application.applicationId)}
+                                            className="inline-flex items-center text-blue-600 hover:text-blue-900 transition-colors cursor-pointer">
+                                                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                View
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                            {(!Array.isArray(filteredApplications) || filteredApplications.length === 0) && (
+                                <tr>
+                                    <td colSpan="10" className="px-6 py-8 text-center text-gray-500">
+                                        {isLoading ? 'Loading applications...' : 'No applications found'}
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+
     )
 }
 
